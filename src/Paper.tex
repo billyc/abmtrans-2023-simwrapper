@@ -166,7 +166,7 @@
 
 
 
-\author[a]{First Author} 
+\author[a]{First Author}
 \author[b]{Second Author}
 \author[a,b]{Third Author\corref{cor1}}
 
@@ -179,7 +179,7 @@ Insert here your abstract text.
 \end{abstract}
 
 \begin{keyword}
-Type your keywords here, separated by semicolons ; 
+Type your keywords here, separated by semicolons ;
 
 %% keywords here, in the form: keyword \sep keyword
 
@@ -217,7 +217,7 @@ Here introduce the paper, and put a nome¬nclature if necessary, in a box with t
 \end{nomenclature}
 
 \subsection{ Structure}
-Files must be in LaTeX format only and should be formatted for direct printing, using the CRC LaTeX template provided. Figures and tables should be embedded and not supplied separately. 
+Files must be in LaTeX format only and should be formatted for direct printing, using the CRC LaTeX template provided. Figures and tables should be embedded and not supplied separately.
 
 Please make sure that you use as much as possible normal fonts in your documents. Special fonts, such as fonts used in the Far East (Japanese, Chinese, Korean, etc.) may cause problems during processing. To avoid unnecessary errors you are strongly advised to use the `spellchecker' function of TeX Editor. Follow this order when typing manuscripts: Title, Authors, Affiliations, Abstract, Keywords, Main text (including figures and tables), Acknowledgements, References, Appendix. Collate acknowledgements in a separate section at the end of the article and do not include them on the title page, as a footnote to the title or otherwise.
 
@@ -228,7 +228,7 @@ Bulleted lists may be included and should look like this:
 \item And so on
 \end{itemize}
 
-Ensure that you return to the `Els-body-text' style, the style that you will mainly be using for large blocks of text, when you have completed your bulleted list. 
+Ensure that you return to the `Els-body-text' style, the style that you will mainly be using for large blocks of text, when you have completed your bulleted list.
 
 Please do not alter the formatting and style layouts which have been set up in this template document. As indicated in the template, papers should be prepared in single column format suitable for direct printing onto paper with trim size $192 \times 262$ mm. Do not number pages on the front, as page numbers will be added separately for the preprints and the Proceedings. Leave a line clear between paragraphs. All the required style templates are provided in the file ``LaTeX Template'' with the appropriate name supplied, e.g. choose 1. Els1st-order-head for your first order heading text, els-abstract-text for the abstract text etc.
 
@@ -253,13 +253,13 @@ And another entry &  5 &  6\\
 
 \subsection{ Construction of references}
 
-References must be listed at the end of the paper. Do not begin them on a new page unless this is absolutely necessary. Authors should ensure that every reference in the text appears in the list of references and vice versa. Indicate references by \cite{Massimo2011} or \cite{Massimo2012} or \cite{Thomas2015} in the text. 
+References must be listed at the end of the paper. Do not begin them on a new page unless this is absolutely necessary. Authors should ensure that every reference in the text appears in the list of references and vice versa. Indicate references by \cite{Massimo2011} or \cite{Massimo2012} or \cite{Thomas2015} in the text.
 
 Some examples of how your references should be listed are given at the end of this template in the `References' section, which will allow you to assemble your reference list according to the correct format and font size.
 
 Reference generation by using bibliography style commands for LaTeX template only.
 
-The author may use ``elsarticle-harv.bst'' as per the style required in document. The sample bib file could be referred. 
+The author may use ``elsarticle-harv.bst'' as per the style required in document. The sample bib file could be referred.
 If the author may using bibstyle for providing references author must comment the bibliography section in TeX file, Bibtex will generate the reference automatically.
 
 If the author may not able to view the references in output same could be done by copying the bibliography section from ``filename.bbl'' file and paste in TeX file.
@@ -357,30 +357,6 @@ There is also the option to include a subheading within the Appendix if you wish
 
 %% For references without a BibTeX database:
 
- \begin{thebibliography}{}
-
-%% \bibitem must have the following form:
-%%   \bibitem{key}...
-%%
-
-\bibitem{Massimo2011}
-{F}ilippini, Massimo, and Lester C. Hunt. (2011) ``Energy demand and
-energy efficiency in the OECD countries: a stochastic demand frontier
-approach." {\it Energy Journal} {\bf 32} (2): 59--80.
-\bibitem{Massimo2012}
-Filippini, Massimo, and Lester C. Hunt. (2012) ``US residential
-energy demand and energy efficiency: A stochastic demand frontier
-approach." {\it Energy Economics} {\bf 34} (5): 1484--1491.
-\bibitem{Thomas2015} 
-Weyman-Jones, Thomas, J\'{u}lia Mendon\c{c}a Boucinha, and Catarina
-Feteira In\'{a}cio. (2015) ``Measuring electric energy efficiency in
-Portuguese households: a tool for energy policy." {\it Management of Environmental Quality: An International Journal} {\bf 26} (3): 407--422.
-\bibitem{} 
-Saunders, Harry (2009) ``Theoretical Foundations of the Rebound Effect'', in Joanne Evans and Lester Hunt (eds) {\it International Handbook on the Economics of Energy}, Cheltenham, Edward Elgar
-\bibitem{} 
-Sorrell, Steve (2009) ``The Rebound Effect: definition and estimation'', in Joanne Evans and Lester Hunt (eds) {\it International Handbook on the Economics of Energy}, Cheltenham, Edward Elgar 
- \end{thebibliography}
-
 \clearpage
 
 %%%% This page is for instructions only, once the article is finalize please omit the below text before creating the final PDF
@@ -400,7 +376,7 @@ The zip package is created as per the guide lines present on the URL http://www.
 \item  Generic and journal specific logos, etc.
 \end{Itemize}
 
-The LaTeX package is the main LaTeX template. All LaTeX support files are required for LaTeX pdf generation from the LaTeX template package. 
+The LaTeX package is the main LaTeX template. All LaTeX support files are required for LaTeX pdf generation from the LaTeX template package.
 
 {\bf Reference style .bst file used for collaboration support:} In the LaTeX template packages of all Procedia titles a new ``.bst'' file is used which supports collaborations downloaded from the path http://www.elsevier.com/author-schemas/the-elsarticle-latex-document-class
 
@@ -410,6 +386,12 @@ The LaTeX package is the main LaTeX template. All LaTeX support files are requir
 {\bf Title}&{\bf Reference style} \\[6pt]
 PROCS  & 3 Vancouver Numbered
 \end{tabular*}
+
+\section{Acknowledgements}
+This research was funded in part by the German Federal Ministry of Transport and Digital Infrastructure (funding number 16AVF2160)
+
+\bibliography{bibliography}
+\bibliographystyle{../src/elsarticle-harv}
 
 \end{document}
 
