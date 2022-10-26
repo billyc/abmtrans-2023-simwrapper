@@ -59,7 +59,7 @@
 
 %% Give the author list to appear in the running head
 %% Example \runauth{C.V. Radhakrishnan et al.}
-\runauth{Author name}
+\runauth{William (Billy) Charlton}
 
 %% The choice of journal logo is determined by the \jid and \jnltitlelogo commands.
 %% A user-supplied logo with the name <\jid>logo.pdf will be inserted if present.
@@ -157,43 +157,26 @@
 %% \dochead can also be used to include a conference title, if directed by the editors
 %% e.g. \dochead{17th International Conference on Dynamical Processes in Excited States of Solids}
 
-\title{Insert here, the title of your paper, Capitalize first letter}
+\title{SimWrapper, a web-based open source platform for interactive visualization of transport data and microsimulation outputs}
 
-%% use optional labels to link authors explicitly to addresses:
-%% \author[label1,label2]{<author name>}
-%% \address[label1]{<address>}
-%% \address[label2]{<address>}
+\author[a]{William Charlton}
 
-
-
-\author[a]{First Author}
-\author[b]{Second Author}
-\author[a,b]{Third Author\corref{cor1}}
-
-\address[a]{First affiliation, Address, City and Postcode, Country}
-\address[b]{Second affiliation, Address, City and Postcode, Country}
+\address[a]{Technische Universität Berlin, Chair of Transport Systems Planning and Transport Telematics, Straße des 17. Juni 135, 10623 Berlin, Germany}
 
 \begin{abstract}
-%% Text of abstract
-Insert here your abstract text.
+YY
+Data visualization has been an integral part of transportation planning and travel demand modeling for decades. This effort describes the essential features and use cases of a general travel data visualization platform. A new web-based, open-source, configurable platform is then presented that can produce a wide array of interactive charts, maps, and dashboards that are generally useful in the transportation domain. The details of software design are provided along with several examples of implementation at a public agency. The platform is found to be very flexible and the straightforward configuration using text files enables efficient development and deployment of web-based interactive visualizations.
+
 \end{abstract}
 
 \begin{keyword}
-Type your keywords here, separated by semicolons ;
-
-%% keywords here, in the form: keyword \sep keyword
-
-%% PACS codes here, in the form: \PACS code \sep code
-
-%% MSC codes here, in the form: \MSC code \sep code
-%% or \MSC[2008] code \sep code (2000 is the default)
-
+Data visualization; Transport microsimulation; MATSim; ActivitySim
 \end{keyword}
-\cortext[cor1]{Corresponding author. Tel.: +0-000-000-0000 ; fax: +0-000-000-0000.}
+\cortext[cor1]{Corresponding author. Tel.: +1-415-335-9282.}
 \end{frontmatter}
 
 %\correspondingauthor[*]{Corresponding author. Tel.: +0-000-000-0000 ; fax: +0-000-000-0000.}
-\email{author@institute.xxx}
+\email{charlton@vsp.tu-berlin.de}
 
 %%
 %% Start line numbering here if you want
@@ -206,72 +189,583 @@ Type your keywords here, separated by semicolons ;
 \section{Main Text}
 \label{main}
 
-Here introduce the paper, and put a nome¬nclature if necessary, in a box with the same font size as the rest of the paper. The paragraphs continue from here and are only separated by headings, subheadings, images and formulae. The section headings are arranged by numbers, bold and 10 pt. Here follows further instructions for authors.
+Having confirmed the utility and capabilities of a fully browser-based
+data visualization approach for three individual project portals, we
+then set out to generalize the method. An entirely generic data
+visualization platform is inherently more difficult than a project
+portal, as every researcher investigates widely disparate questions and will be focusing on completely different outputs. Where one researcher may be using MATSim to predict future dynamic-response shared taxi vehicle flows, another is doing emergency-response evacuation planning, or emissions reduction through increased transit ridership efforts. The tool needs to be extremely flexible.
 
-\begin{nomenclature}
-\begin{deflist}[A]
-\defitem{A}\defterm{radius of}
-\defitem{B}\defterm{position of}
-\defitem{C}\defterm{further nomenclature continues down the page inside the text box}
-\end{deflist}
-\end{nomenclature}
+% \begin{nomenclature}
+% \begin{deflist}[A]
+% \defitem{A}\defterm{radius of}
+% \defitem{B}\defterm{position of}
+% \defitem{C}\defterm{further nomenclature continues down the page inside the text box}
+% \end{deflist}
+% \end{nomenclature}
 
-\subsection{ Structure}
-Files must be in LaTeX format only and should be formatted for direct printing, using the CRC LaTeX template provided. Figures and tables should be embedded and not supplied separately.
 
-Please make sure that you use as much as possible normal fonts in your documents. Special fonts, such as fonts used in the Far East (Japanese, Chinese, Korean, etc.) may cause problems during processing. To avoid unnecessary errors you are strongly advised to use the `spellchecker' function of TeX Editor. Follow this order when typing manuscripts: Title, Authors, Affiliations, Abstract, Keywords, Main text (including figures and tables), Acknowledgements, References, Appendix. Collate acknowledgements in a separate section at the end of the article and do not include them on the title page, as a footnote to the title or otherwise.
+% \begin{figure}
+%   \centering
+% 	\begin{minipage}{.75\textwidth}
+% 		\includegraphics[width=\textwidth]{chapters/06-simwrapper/images/charts.png.pdf}
+% 		\caption{CHart: stuff.}
+% 		\label{fig:chartychart}
+% 	\end{minipage}
+% \end{figure}
 
-Bulleted lists may be included and should look like this:
+This chapter describes \textbf{SimWrapper}, an open-source web-based
+data visualization platform we developed with the goal that it be useful
+for anyone working with MATSim outputs or even outputs from other
+data-intensive microsimulation models.
+
+
+% Bulleted lists may be included and should look like this:
+% \begin{itemize}[]
+% \item First point
+% \item Second point
+% \item And so on
+% \end{itemize}
+
+
+% \subsection{ Tables}
+
+% All tables should be numbered with Arabic numerals. Every table should have a caption. Headings should be placed above tables, left justified. Only horizontal lines should be used within a table, to distinguish the column headings from the body of the table, and immediately above and below the table. Tables must be embedded into the text and not supplied separately. Below is an example which the authors may find useful.
+
+% \begin{table}[h]
+% \caption{An example of a table.}
+% \begin{tabular*}{\hsize}{@{\extracolsep{\fill}}lll@{}}
+% \toprule
+% An example of a column heading & Column A ({\it{t}}) & Column B ({\it{t}})\\
+% \colrule
+% And an entry &   1 &  2\\
+% And another entry  & 3 &  4\\
+% And another entry &  5 &  6\\
+% \botrule
+% \end{tabular*}
+% \end{table}
+
+% %\enlargethispage{12pt}
+
+
+\section{Overview: SimWrapper, in a nutshell}
+
+Many design questions were already settled in the aforementioned
+research YY.
+
+SimWrapper, in a nutshell:
+
+% \begin{itemize}[]
+% \item First point
+% \item Second point
+% \item And so on
+% \end{itemize}
+
 \begin{itemize}[]
-\item First point
-\item Second point
-\item And so on
+\item
+    is a static website that runs client-side javascript in the form of a ``single page application'', a common approach in current web
+    development that is compatible with all modern web browsers;
+\item
+    supports network-based file storage for public- and/or
+    group-accessible shared data files (model runs), but has no other
+    back-end server requirements and can run completely locally if no
+    network file storage is available or needed;
+\item
+    allows the user to navigate through their local filesystem or shared
+    network storage of model runs to view results that are saved in a
+    specific folder, rather than a database-centric approach. This
+    matches the design of MATSim and other simulation models which
+    produce collections of output files by default;
+\item
+    provides a collection of data visualization archetypes that are each
+    appropriate for displaying a certain type of data, for example
+    various statistical chart types (bars, lines, area, pie), geographic
+    data viewers supporting road and transit network link data, area
+    aggregation (``choropleth'' and ``spider'') maps, XY coordinate
+    plots, and many more;
+\item
+    can combine all of these disparate components into cohesive
+    dashboards that the user can lay out in a flexible manner, using
+    small declarative configuration files. These configurations can be
+    applied across multiple projects or simulation runs;
+\item
+  is GDPR (General Data Protection Requirement) compliant,
+  as it performs no user tracking, has no centralized data storage, no advertising, nor any other privacy-compromising misfeatures.
+  SimWrapper is not a product for sale; it is an open research
+  platform.
 \end{itemize}
 
-Ensure that you return to the `Els-body-text' style, the style that you will mainly be using for large blocks of text, when you have completed your bulleted list.
+The following sections explore the design of SimWrapper in more detail.
 
-Please do not alter the formatting and style layouts which have been set up in this template document. As indicated in the template, papers should be prepared in single column format suitable for direct printing onto paper with trim size $192 \times 262$ mm. Do not number pages on the front, as page numbers will be added separately for the preprints and the Proceedings. Leave a line clear between paragraphs. All the required style templates are provided in the file ``LaTeX Template'' with the appropriate name supplied, e.g. choose 1. Els1st-order-head for your first order heading text, els-abstract-text for the abstract text etc.
+\section{Reuse of existing framework and
+components}
 
-\subsection{ Tables}
+\cite{CharltonLaudan2020WebBasedVisualization} did it first.
 
-All tables should be numbered with Arabic numerals. Every table should have a caption. Headings should be placed above tables, left justified. Only horizontal lines should be used within a table, to distinguish the column headings from the body of the table, and immediately above and below the table. Tables must be embedded into the text and not supplied separately. Below is an example which the authors may find useful.
 
-\begin{table}[h]
-\caption{An example of a table.}
-\begin{tabular*}{\hsize}{@{\extracolsep{\fill}}lll@{}}
-\toprule
-An example of a column heading & Column A ({\it{t}}) & Column B ({\it{t}})\\
-\colrule
-And an entry &   1 &  2\\
-And another entry  & 3 &  4\\
-And another entry &  5 &  6\\
-\botrule
-\end{tabular*}
-\end{table}
+The starting point for SimWrapper was the PAVE project website described
+in section YY. This ``single page application'' approach involves
+selecting a curated set of javascript infrastructure libraries for
+common needs, and then writing bespoke code for our specific use case
+and the ``glue'' between the components.
 
-%\enlargethispage{12pt}
+Our experience with PAVE led us to select existing Javascript libraries
+for the following:
+
+\begin{itemize}
+\item
+  User interface interaction: the ``Vue'' framework YY is the primary
+  glue that links the page layout with user interactions such as mouse
+  clicks, running code when user-initiated events occur
+\item
+  Data loading: Most MATSim outputs are either tabular text files in CSV
+  format, or compressed XML files with explicit schemas. The Papaparse
+  and Fast-XML-Parser libraries handle loading these two data formats
+\item
+  Charting: the PAVE site included statistical charts such as bar, line,
+  pie, and scatter plots, and used the Plotly javascript library. Plotly
+  is very easy to use but not as feature-rich as some other choices; see
+  below YY for updated capabilities
+\item
+  Geographic data on maps: our initial efforts using the Mapbox
+  javascript library led us to the more performant Deck.gl collection of
+  map-based visualizations.
+\item
+  Animation: Three.js is a very flexible 3D animation library that is
+  used for PAVE vehicle animation visualizations.
+\end{itemize}
+
+All of these libraries share compatible open-source licenses, and are
+included in SimWrapper under the terms of those licenses.
+
+\section{Modifications necessary}
+
+Direct user feedback, described in detail in section YY, allowed us to
+map out a set of changes and improvements for the generic tool. In
+summary, changes were needed in the following categories:
+
+\begin{itemize}
+\item
+  Performance. The network link viewer in particular was slow to load
+  datasets for large simulations. This was not a problem for PAVE or
+  AVÖV because the study areas were less populated.
+\item
+  Flexibility. Each of the data visualization components needed to be
+  made much more flexible. For example, the PAVE link viewer assumed
+  that input data was specified by time period, whereas a generic tool
+  needs to depict any sort of data.
+\item
+  Output traversal. While PAVE had a hard-coded set of alternatives that
+  could be browsed in a simple manner, a generic tool needs some sort of
+  model run traversal capability; a way to browse the hierarchical file
+  storage available.
+\item
+  Stability and resilience. The PAVE site included almost no error
+  message reporting or helpful debugging infrastructure, because expert
+  analysts carefully crafted the inputs for each alternative. A generic
+  tool needs to be tolerant of user mistakes and helpful in guiding the
+  user when inputs are lost or malformed.
+\item
+  Better defaults plus configurability. We do not intend to replicate a
+  full-featured desktop application, of which there are many in the
+  Geographic Information System (GIS) realm. Rather, users expressed a
+  desire for a set of clear, curated defaults that have some
+  configurability. For much more advanced configuration, a
+  professionally-developed package such as QGis is likely more
+  appropriate.
+\end{itemize}
+
+\subsubsection{Audience}
+
+The PAVE website was intended to be public-facing: both agency staff and
+actual members of the public could navigate the site. It presented a
+small set of YY six alternatives, depicting the same visualizations for
+each alternative.
+
+SimWrapper could be public facing, but is predominantly used in its
+current form by researchers and professional analysts at public
+agencies.
+
+YY
+
+\section{Accessing files through a web
+browser}
+
+The use case of file storage via departmental file server is
+well-explored and very functional, as expressed in the project websites
+for AVÖV, PAVE, and COVID-Sim.
+
+A key difference between the earlier project websites and SimWrapper is
+the need to ``meet the users where they are'' -- in other words, we
+cannot rely on there being a departmental file server with a public API
+endpoint serving data files. One of the primary feedback elements from
+the initial MatHub implementation described in chapter YY was that it
+was too onerous to upload model run outputs to a second server system
+before being able to view or analyze anything. In addition to being
+wasteful of space (and MATSim outputs can be gigabytes in size!), it is
+time-consuming.
+
+For regular users in the middle of their research workflow, something
+else is needed. Most of our internal users run simulations either on
+their personal laptop/desktop machines, or on the university compute
+cluster, which has extensive attached storage but no public-facing
+access via the web. Furthermore, these runs are often not intended to be
+immediately publicized.
+
+Thus we explore several avenues for enabling users to view their
+outputs, described here.
+
+% ------------------------------------------------------------------------------------
+% ### How SimWrapper access files via HTTP
+% ------------------------------------------------------------------------------------
+
+\subsection{How SimWrapper access files via
+HTTP}
+
+SimWrapper is designed to allow browsing of files from
+administrator-defined HTTP URLs, which represent the root of the file
+storage for that project. For example, the PAVE project datasets are all
+stored on the VSP public file server at the URL
+
+\url{https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/projects/pave/website/}
+
+That URL is the defined ``root'' of the project; all of the project
+dashboard configurations, model outputs, and processed data files exist
+in various subfolders below that location. The PAVE website at
+https://vsp.berlin/pave is set up to read files from that base URL. (But
+refer to section YY for a discussion of CORS configuration, which is
+necessary to allow one website to read the files stored on another.
+
+SimWrapper elevates this to allow multiple configured root filesystems;
+the public VSP file server is one such root, but others can also be
+configured and are displayed on the home page of SimWrapper. Each root
+is expected to provide HTTP directory access to this storage: SimWrapper
+needs to be able to \emph{view directory listings} and \emph{retrieve
+file contents}. SimWrapper never writes any files anywhere; it is
+read-only.
+
+% ------------------------------------------------------------------------------------
+% ### Local files
+% ------------------------------------------------------------------------------------
+
+\subsection{Local files on a personal
+laptop/desktop}
+
+This design presents a problem for local files: By design, all web
+browsers explicitly forbid file-system access from any websites by
+default. This default is certainly a good default; no one wants any
+random website to start sniffing around their home directory.
+
+But in our case this is not any random website: we \emph{want}
+SimWrapper to see the files in some of our local folders. How can this
+be accomplished?.
+
+After several explorations including raw HTML files opened directly,
+arcane experimental browser flags (always vendor specific!), and other
+less fruitful avenues, the one method that consistently works for all
+browsers is as follows: for browsing local files on a machine, first
+start up a small helper application which is itself a simple HTTP
+server. This tiny server responds to HTTP requests and delivers the
+directory contents requested. The server listens on ``localhost'',
+i.e.~your own computer, generally on port 8000. So the full URL is
+\url{http://localhost:8000/}.
+
+Once this is set up and running, this HTTP endpoint can be accessed in
+SimWrapper just like any other external file storage. SimWrapper knows
+be default to look for files at URL \url{http://localhost:8000}.
+
+As part of this research we wrote a very small Python library which
+provides this server. Any machine with Python 3.x installed can run
+\texttt{pip\ install\ simwrapper} to install this mini file server, and
+then run it by navigating to their data folder and running the command
+\texttt{simwrapper\ serve}. That includes all of the server components
+and configuration needed to server files to SimWrapper.
+
+Some configuration notes:
+
+\begin{itemize}
+\item
+  The local HTTP server will only serve the files from inside the
+  working directory in which it is started, including any subfolders. No
+  other folders on the user's machine are exposed.
+\item
+  The computer's operating machine has default firewall and router rules
+  that will generally prohibit any outside access from other computers
+  on the LAN or the Internet. This can be modified; see YY
+\item
+  Some configuration details for the server that are important for our
+  use case: we must enable access from websites at different URLs using
+  ``CORS'' configuration headers; see YY
+\item
+  Some browsers (Safari, and now recent builds of Chrome) sometimes
+  block access to localhost sites or http sites (vs.~https sites), see
+  discussion at YY
+\item
+  Every language framework already includes some sort of ``Tiny HTTP
+  Server'' library for just these types of uses: in Python it is in the
+  \texttt{http.server} library, in Java there is the Jibble
+  SimpleWebServer. Our \texttt{simwrapper} python tool leverages the
+  existing Python infrastructure.
+\item
+  We also wrote a java version, published as
+  \texttt{mini-file-server.jar} for users who are more comfortable
+  running Java-based software than Python.
+\end{itemize}
+
+The Python tool including source and user documentation is currently
+available at \url{https://pypi.org/project/simwrapper/}.
+
+The Java tool is currently available at
+\url{https://github.com/simwrapper/mini-file-server}
+
+% ----------------------------------------------
+\subsubsection{Data security and
+privacy}
+
+With this setup, the SimWrapper site itself is loaded from the Internet,
+but once loaded, the user's data never leaves their computer. SimWrapper
+is an entirely client-based system with absolutely no upstream server.
+The javascript runs in the users' browser, accessing files available on
+localhost only -- also on the user's own computer. Nothing leaves the
+browser. If there are privacy or confidentiality issues with model
+outputs, SimWrapper can still be used for analysis in this ``localhost''
+mode.
+
+% ------------------------------------------------------------------------------------
+% ### Files on Compute Cluster servers
+% ------------------------------------------------------------------------------------
+
+\subsection{Files residing on the university compute cluster, accessed
+via SSH}
+
+This local-http-server paradigm can be extended to access files on any
+remote university computer cluster using the SSH (``secure shell'')
+protocol.
+
+SSH is usually the protocol (and command) used to log into remote
+systems. There is a parallel command which allows ``mounting'' the
+remote file system using the SSH protocol. The remote files are mapped
+to a folder on the user's system; once mounted, the user can browse the
+files inside that folder as if they were local files (but generally more
+slowly, depending on network throughput conditions).
+
+\begin{itemize}
+\item
+  Linux users can install the command \texttt{sshfs} to add this
+  capability;
+
+  \begin{itemize}
+  \item
+    once installed, a command similar to
+    \texttt{sshfs\ username@cluster.math.tu-berlin.de:/net/myfiles\ cluster}
+    will mount the remote folder \texttt{/net/myfiles} to my local
+    folder \texttt{cluster}. You would change the username, URL, and
+    folder names to match your situation.
+  \item
+    \texttt{sudo\ umount\ cluster} or similar to unmount.
+  \end{itemize}
+\item
+  YY MacOS is similar to Linux but requires installing the sshfs fuse
+  driver first
+\item
+  YY Windows users have many options for FUSE-based sshfs support, this
+  repo is nice one \url{https://github.com/billziss-gh/sshfs-win}
+\end{itemize}
+
+% ------------------------------------------------------------------------------------
+% ### Files on other machines: simwrapper here
+% ------------------------------------------------------------------------------------
+
+\subsection{Files residing on another machine on the local LAN
+network}
+
+A challenging use case presented by users is one or more central
+``modeling server'' machines on the local LAN, where most runs are
+performed and which contain the simulation outputs.
+
+The aforementioned localhost-based HTTP server does not work in this
+situation, because a user sitting at their computer, opening the
+Internet-based SimWrapper website, trying to read files served via
+localhost on the modeling server, will always be blocked by browser
+security measures. After many hours trying to find a way to sneak around
+these restrictions, we accepted that this security measure is working as
+designed, and we need a different approach.
+
+The reason this approach is blocked is because the SimWrapper website is
+hosted on a secure ``HTTPS'' server, while the localhost files must be
+served without encryption using HTTP. Setting up an encryption
+certificate is difficult because internal LAN machines don't typically
+have world-findable DNS entries. This combination of secure and insecure
+content is blocked by all browsers.
+
+A workaround is to serve the files and the site from the same file
+server, instead of using the Internet-based SimWrapper that is hosted at
+vsp.berlin. We are already asking users to run a small file server to
+access their local files, thus extending that file server to also serve
+the necessary javascript and HTML is a natural extension.
+
+And this is what we have done: a special mode is added to the
+\texttt{simwrapper} python tool named \texttt{simwrapper\ here}. Now the
+little server will serve both the file contents of the folder in which
+it is started, \emph{and} the SimWrapper website itself.
+
+The user runs \texttt{simwrapper\ here} on the file server instead of
+\texttt{simwrapper\ serve}, \emph{noting the full URL printed in the
+console}, and then on their personal computer browses to that URL
+instead of to vsp.berlin/simwrapper. In this manner, the site and any
+local files stored on that server are made available, together.
+
+This also implies that SimWrapper can be used completely offline once it
+is installed.
+
+% ------------------------------------------------------------------------------------
+% ### Special case: Google Chrome
+% ------------------------------------------------------------------------------------
+
+\subsection{Special case: Chrome and the ``File System Access
+API''}
+
+Google Chrome and a subset of other browsers based on the Chromium
+codebase implement an experimental API known as ``File System Access
+API''. This is not part of the official Web specification, and it may
+never be adopted by other browser vendors.
+
+But for users running Google Chrome, this experimental API provides
+another avenue for accessing local files, one which completely
+eliminates the need for the local file server approaches above.
+
+This is considered ``progressive enhancement,'' or in other words,
+adding features to the website when the browser is identified as
+supporting them.
+
+On Chrome, users will see an additional element on the main page of
+SimWrapper, a button allowing them to grant access to local files. The
+browser will open a standard folder-picking dialog followed by a warning
+that granting this permission will allow the SimWrapper site to view the
+files in that folder. Et Voíla, that is exactly what we need.
+
+Once permission is granted, local files are immediately visible without
+any additional configuration. This permission can be revoked and may be
+re-requested every time the browser restarts.
+
+YY show browser grant access dialog
+
+% ------------------------------------------------------------------------------------
+% ## Converting purpose-built vizes into Generic Data Viewers
+% ------------------------------------------------------------------------------------
+
+\section{Converting purpose-built visualizations into generic data
+viewers}
+
+The underlying infrastructure -- the build system, the user interaction
+libraries, and the choice of off-the-shelf components -- was more or
+less complete after the PAVE, AVÖV, and COVID-Sim projects were
+operational. But the specific views needed a great deal of retooling to
+make them useful in a generic manner.
+
+This section describes some of the most challenging aspects of this
+process of genericizing SimWrapper.
+
+% ------------------------------------------------------------------------------------
+% ### Link Viewer
+% ------------------------------------------------------------------------------------
+
+\subsection{Network link viewer}
+
+The link viewer was originally scoped to display link volumes only, such
+as a typical ``bandwidth plot'' commonly used in travel modeling. Even
+for PAVE this was short-sighted, as the project team quickly found other
+uses for the viewer such as link-based emissions.
+
+Two critical updates made for SimWrapper are (1) the removal of the
+assumption that the data inputs will always have time period data in the
+columns, plus a summary ``grand total'' column; and (2) that colors and
+widths must be configurable, preferably separately.
+
+These changes are now part of SimWrapper -- see YY for a typical plot.
+
+YY show a bandwidth plot
+
+User testing shows that a great deal more is still necessary to meet
+user expectations. Data filters and configurable hovers are two of the
+most-requested enhancements.
+
+YY user testing
+
+% ------------------------------------------------------------------------------------
+% ### XY Data Plots
+% ------------------------------------------------------------------------------------
+
+\subsection{XY Hexagon plots}
+
+Much data is not link-based, even for transport simulations. Activity locations, home locations, pickups and dropoffs for transit and taxi modes, all have geographic coordinates associated with them but are not necessarily attached to specific links.
+
+A new visualization type, the ``XY Hexagons'' plot, depicts these types of data by aggregating them into user-definable hexagonal buckets. The number of points inside the hexagons corresponds to a color or height; this is user-configurable.
+
+YY show XY Hexagon plot
+
+The default MATSim output \texttt{output\_trips.csv} includes this type of data, and is automatically viewable without any configuration at all if it is present in a SimWrapper data folder.
+
+% ------------------------------------------------------------------------------------
+% ## Calculation Tables
+% ------------------------------------------------------------------------------------
+
+\section{Calculation tables: providing top-line summary metrics}
+
+Early in the development of SimWrapper, user feedback identified the need for reporting basic summary statistics and generating common aggregate values from model runs. These top-level summaries provide the first indication of useful results, such as overall mode share, average travel times, total emissions, and so forth. In addition, these measures are an excellent way to "sanity-check" a model run; in other words, to identify any obvious glaring errors in those topline numbers when compared to previously-established norms.
+
+The first element needed is a straightforward way for users to specify the inputs, outputs, and formatting of calculation tables, compatible with the file-based configuration approaches already in use for the graphical visualizations. A second challenge is to formulate a clear and accurate scheme for specifying the needed calculations, including statistical transformations of the inputs such as counts, sums, and so on. Finally, the tool must perform those calculations in memory and produce the display the results.
+
+These three elements are explored in order.
+
+% ------------------------------------------------------------------------------------
+% ### Calculation Table Config: Inputs, Files, Outputs
+% ------------------------------------------------------------------------------------
+
+\subsection{Specifying calculation table files, inputs, and outputs}
+
+The most robust way to generate and display a table of numbers is by having the user develop their own post-processing scripts which output a simple CSV with the summary values and labels that they need. For this approach, nothing special is needed; whatever data analysis pipelines the analyst is already using are sufficient. Especially for more complex post-processing needs, using a high-quality platform such as Python or R is the recommended path.
+
+For more simple summaries, we develop a way to extract and minimally process typical MATSim data files including CSV and XML formats. This is based on experience with the hesitancy of some analysts in our department to write Python and R scripts (since they are far more familiar with Java programming). If all one needs is the sum of a column of values or the count of some event types, learning Python and debugging a Python script is perhaps overkill.
+
+As the file-based YAML configuration paradigm for SimWrapper is at this point well-established, a new YAML configuration schema for table calculations is the most natural way to express these table definitions.
+
+A new \texttt{table-*.yml} YAML schema containing four sections emerged from extensive iteration with users. The four required sections are:
+
+\begin{itemize}
+
+  \item \textbf{files}: The set of input file or files required for the table. These can be raw MATSim outputs or the results of any pre- or post-processing that has already occurred in the analyst data pipeline.
+
+  \item \textbf{interactive input entries}: This is a list of end-user-editable entries that are visible on interactive web form. Some calculations benefit from having a variable input which the user can specify; imagine fuel cost per liter, or number of vehicles in a taxi fleet. Each of these entries can have a default value.
+
+  \item \textbf{calculations}: An ordered list of mathematical calculations to be performed. Variables, data columns, and interactive elements specified above are combined in equations as needed. This is described in more detail below.
+
+  \item \textbf{outputs}: The final table entries are specified with formatting and labels.
+
+\end{itemize}
+
+Three of the four sections --- \emph{files}, \emph{interactive entries}, and \emph{outputs} --- are trivially specified and do not require extensive exposition here: they are straightforward definitions of file names, titles, and formatting directives. These are well-documented in the YY documentation available on the SimWrapper Website (\cite{SimWrapperWebsite}).
+
+The calculations are explored next.
+
+% ------------------------------------------------------------------------------------
+% ### Calculation Table DSL: Specifying the Equations
+% ------------------------------------------------------------------------------------
+\subsection{Specifying calculations using a Domain-Specific Language}
+
+The final and most important piece of specifying calculations is devising the equation format to be used in the YAML configuration, which brings together the interactive value inputs, the required input files, data columns in those files (and any data manipulations thereon), and combines them all in understandable algebraic equations that can be solved by the tool.
+
+This is more akin to a "domain-specific language" (DSL) YY ACRONYM than a configuration file.
+
+\cite{Visser2008} defines a domain-specific language as follows, "A domain-specific language (DSL) is a high-level software implementation language that supports concepts and abstractions that are related to a particular (application) domain." Visser explains further that a DSL is in essence "the encapsulation of design and implementation knowledge from a particular application or technical domain. The commonalities of the domain are implemented directly in a conventional programming language or indirectly in code generation templates, while the variability is configurable by the application developer through some configuration interface."
+
+This is precisely what the YAML calculation definitions set out to do: allow a user who is an expert in the dataset and the needed transformations for a particular metric, to define that in a manner that doesn't require them to write a data analysis script in a full-fledged programming language such as R or Python.
+
+YY continue
 
 \subsection{ Construction of references}
 
 References must be listed at the end of the paper. Do not begin them on a new page unless this is absolutely necessary. Authors should ensure that every reference in the text appears in the list of references and vice versa. Indicate references by \cite{Massimo2011} or \cite{Massimo2012} or \cite{Thomas2015} in the text.
 
-Some examples of how your references should be listed are given at the end of this template in the `References' section, which will allow you to assemble your reference list according to the correct format and font size.
-
-Reference generation by using bibliography style commands for LaTeX template only.
-
-The author may use ``elsarticle-harv.bst'' as per the style required in document. The sample bib file could be referred.
-If the author may using bibstyle for providing references author must comment the bibliography section in TeX file, Bibtex will generate the reference automatically.
-
-If the author may not able to view the references in output same could be done by copying the bibliography section from ``filename.bbl'' file and paste in TeX file.
-
-
-
-\subsection{Section headings}
-Section headings should be left justified, bold, with the first letter capitalized and numbered consecutively, starting with the Introduction. Sub-section headings should be in capital and lower-case italic letters, numbered 1.1, 1.2, etc,~and left justified, with second~and subsequent lines indented. All headings should have a minimum of two text lines after them before a page or column break.
-Ensure the text area is not blank except for the last page.
-
-\subsection{General guidelines for the preparation of your text}
-Avoid hyphenation at the end of a line. Symbols denoting vectors and matrices should be indicated in bold type. Scalar variable names should normally be expressed using italics. Weights and measures should be expressed in SI units. All non-standard abbreviations or symbols must be defined when first mentioned, or a glossary provided.
 
 \subsection{File naming and delivery}
 Please title your files in this order `procedia acronym\_conference acronym\_authorslastname'.  Submit both the source file and the PDF to the Guest Editor.
@@ -290,102 +784,18 @@ Component types:
 \end{itemize}
 
 
-\subsection{Footnotes}
-Footnotes should be avoided if possible. Necessary footnotes should be denoted in the text by consecutive superscript letters\footnote{Footnote text.}. The footnotes should be typed single spaced, and in smaller type size (8 pt), at the foot of the page in which they are mentioned, and separated from the main text by a one line space extending at the foot of the column. The `Els-footnote' style is available in the ``TeX Template'' for the text of the footnote.
+% \subsection{Footnotes}
+% Footnotes should be avoided if possible. Necessary footnotes should be denoted in the text by consecutive superscript letters\footnote{Footnote text.}. The footnotes should be typed single spaced, and in smaller type size (8 pt), at the foot of the page in which they are mentioned, and separated from the main text by a one line space extending at the foot of the column. The `Els-footnote' style is available in the ``TeX Template'' for the text of the footnote.
 
-Please do not change the margins of the template as this can result in the footnote falling outside printing range.
+% Please do not change the margins of the template as this can result in the footnote falling outside printing range.
 
 
-\section{Illustrations}
-All figures should be numbered with Arabic numerals (1,2,3,$\,\ldots.$). Every figure should have a caption. All\break photographs, schemas, graphs and diagrams are to be referred to as figures. Line drawings should be good\break quality scans or true electronic output. Low-quality scans are not acceptable. Figures must be embedded into the text and not supplied separately. In MS word input the figures must be properly coded. Preferred format of figures are PNG, JPEG, GIF etc. Lettering and symbols should be clearly defined either in the caption or in a legend provided as part of the figure. Figures should be placed at the top or bottom of a page wherever possible, as close as possible to the first reference to them in the paper. Please ensure that all the figures are of 300 DPI resolutions as this will facilitate good output.
-
-The figure number and caption should be typed below the illustration in 8 pt and left justified [{\bfseries\itshape Note:} one-line captions of length less than column width (or full typesetting width or oblong) centered]. For more guidelines and\break information to help you submit high quality artwork please visit: http://www.elsevier.com/artworkinstructions\break Artwork has no text along the side of it in the main body of the text. However, if two images fit next to each other, these may be placed next to each other to save space. For example, see Fig.~1.
 \begin{figure}[t]\vspace*{4pt}
 %\centerline{\includegraphics{fx1}\hspace*{5mm}\includegraphics{fx1}}
 \centerline{\includegraphics{gr1}}
 \caption{(a) first picture; (b) second picture.}
 \end{figure}
 
-
-\section{Equations}
-Equations and formulae should be typed in MathType, and numbered consecutively with Arabic numerals in parentheses on the right hand side of the page (if referred to explicitly in the text). They should also be separated from the surrounding text by one space
-\begin{equation}
-\begin{array}{lcl}
-\displaystyle X_r &=& \displaystyle\dot{Q}^{''}_{rad}\left/\left(\dot{Q}^{''}_{rad} + \dot{Q}^{''}_{conv}\right)\right.\\[6pt]
-\displaystyle \rho &=& \displaystyle\frac{\vec{E}}{J_c(T={\rm const.})\cdot\left(P\cdot\left(\displaystyle\frac{\vec{E}}{E_c}\right)^m+(1-P)\right)}
-\end{array}
-\end{equation}
-
-
-\section{Online license transfer}
-All authors are required to complete the Procedia exclusive license transfer agreement before the article can be published, which they can do online. This transfer agreement enables Elsevier to protect the copyrighted material for the authors, but does not relinquish the authors' proprietary rights. The copyright transfer covers the exclusive rights to reproduce and distribute the article, including reprints, photographic reproductions, microfilm or any other reproductions of similar nature and translations. Authors are responsible for obtaining from the copyright holder, the permission to reproduce any figures for which copyright exists.
-
-\section*{Acknowledgements}
-
-Acknowledgements and Reference heading should be left justified, bold, with the first letter capitalized but have no numbers. Text below continues as normal.
-
-%% The Appendices part is started with the command \appendix;
-%% appendix sections are then done as normal sections
-%% \appendix
-
-%% \section{}
-%% \label{}
-
-\appendix
-\section{An example appendix}
-Authors including an appendix section should do so before References section. Multiple appendices should all have headings in the style used above. They will automatically be ordered A, B, C etc.
-
-\subsection{Example of a sub-heading within an appendix}
-There is also the option to include a subheading within the Appendix if you wish.
-%% References
-%%
-%% Following citation commands can be used in the body text:
-%% Usage of \cite is as follows:
-%%   \cite{key}         ==>>  [#]
-%%   \cite[chap. 2]{key} ==>> [#, chap. 2]
-%%
-
-%The citation must be used in following style: \cite{article-minimal} \cite{article-full} \cite{article-crossref} \cite{whole-journal}.
-%% References with BibTeX database:
-
-%\bibliography{xampl}
-%\bibliographystyle{elsarticle-harv}
-
-
-%% Authors are advised to use a BibTeX database file for their reference list.
-%% The provided style file elsarticle-num.bst formats references in the required Procedia style
-
-%% For references without a BibTeX database:
-
-\clearpage
-
-%%%% This page is for instructions only, once the article is finalize please omit the below text before creating the final PDF
-\normalMode
-
-\section*{Instructions to Authors for LaTeX template:}
-
-\section{ZIP mode for LaTeX template:}
-
-The zip package is created as per the guide lines present on the URL http://www.elsevier.com/author-schemas/ preparing-crc-journal-articles-with-latex for creating the LaTeX zip file of Procedia LaTeX template.  The zip generally contains the following files:
-\begin{Itemize}[]\leftskip-17.7pt\labelsep3.3pt
-\item ecrc.sty
-\item  elsarticle.cls
-\item elsdoc.pdf
-\item .bst file
-\item Manuscript templates for use with these bibliographic styles
-\item  Generic and journal specific logos, etc.
-\end{Itemize}
-
-The LaTeX package is the main LaTeX template. All LaTeX support files are required for LaTeX pdf generation from the LaTeX template package.
-
-{\bf Reference style .bst file used for collaboration support:} In the LaTeX template packages of all Procedia titles a new ``.bst'' file is used which supports collaborations downloaded from the path http://www.elsevier.com/author-schemas/the-elsarticle-latex-document-class
-
-\section{Reference style used in Computer Science:}
-\let\footnotesize\normalsize
-\hspace*{-10pt}\begin{tabular*}{\hsize}{@{}ll@{}}
-{\bf Title}&{\bf Reference style} \\[6pt]
-PROCS  & 3 Vancouver Numbered
-\end{tabular*}
 
 \section{Acknowledgements}
 This research was funded in part by the German Federal Ministry of Transport and Digital Infrastructure (funding number 16AVF2160)
