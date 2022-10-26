@@ -1,65 +1,47 @@
 # --------------------------------------------------
 # standard Makefile preamble see https://tech.davis-hansson.com/p/make/
 SHELL := bash
+.ONESHELL:
+.SHELLFLAGS := -eu -o pipefail -c
+.DELETE_ON_ERROR:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-.SHELLFLAGS := -eu -o pipefail -c
-.ONESHELL:
-.DELETE_ON_ERROR:
 ifeq ($(origin .RECIPEPREFIX), undefined)
   $(error Your Make does not support .RECIPEPREFIX. Use GNU Make 4.0 or later)
 endif
 .RECIPEPREFIX = >
 # --------------------------------------------------
 
-SRC = .
-TEX = phd
+cur_dir = $(shell pwd)
 
-PNG_IMAGES := $(shell find $(SRC)/chapters -name "*.png")
-PDF_IMAGES := $(patsubst %.png, %.png.pdf, $(PNG_IMAGES))
+SRC = src
+TEX = Paper
 
-BUILD_DEPS := $(SRC)/$(TEX).tex
-BUILD_DEPS += Makefile $(shell find $(SRC) -name "*.tex")
-BUILD_DEPS += $(SRC)/settings/mysettings.tex
-BUILD_DEPS += $(shell find $(SRC)/bib/*)
-BUILD_DEPS += $(PDF_IMAGES)
+build: build/$(TEX).pdf
+.PHONY: build
 
-$(TEX).pdf: $(BUILD_DEPS)
-> rm -f *.log
-> pdflatex -interaction batchmode $(TEX).tex
 
-.sentinel-final: $(TEX).pdf
-> BIBINPUTS=$(SRC)/bib bibtex $(TEX)
-> makeglossaries phd
-> pdflatex -interaction batchmode $(TEX).tex
-> pdflatex -interaction batchmode $(TEX).tex
-> pdflatex -interaction batchmode $(TEX).tex
-> touch $@  # only creates .sentinel-final when the entire build process completes successfully
-
-final: .sentinel-final
-
-images: $(PDF_IMAGES)
-.PHONY: images
-
-%.png.pdf: %.png
-> convert -compress LZW $*.png pdf:$*.png.pdf
+build/$(TEX).pdf: Makefile $(shell find $(SRC)/*)
+> rm -rf build
+> mkdir -p build
+> cd $(SRC)
+> pdflatex --output-directory ../build $(TEX).tex
+> cd ../build
+> BIBINPUTS=../$(SRC):~/shared-svn/documents/inputs/bib bibtex $(TEX)
+> cd ../$(SRC)
+> pdflatex --output-directory ../build $(TEX).tex
+> pdflatex --output-directory ../build $(TEX).tex
 
 serve:
-> fswatch -o -e "aux$$"-e "pdf$$" $(TEX).tex chapters bib | xargs -n1 -I{} gmake
-> # inotifywait -qrm --event modify src/* | while read file; do make; done
+> fswatch -o src | xargs -n1 -I{} gmake
 .PHONY: serve
 
-clean:
-> rm -f $(TEX).pdf
-> rm -f .sentinel*
-> find . -name "*.aux" | xargs rm
-> find . -name "*.png.pdf" | xargs rm
-> for EXT in acn acr alg bbl blg brf dvi glg glo gls ist lof log lot tdo toc; \
-    do rm -f $(TEX).$$EXT; done
-.PHONY: clean
+#> inotifywait -qrm --event modify src/* | while read file; do make; done
 
-variables:
->@echo PNG_IMAGES: ${PNG_IMAGES}
->@echo PDF_IMAGES: ${PDF_IMAGES}
-# >@echo BUILD_DEPS: ${BUILD_DEPS}
-.PHONY: variables
+
+clean:
+> rm -rf $(SRC)/*.aux
+> rm -rf $(SRC)/*.pdf
+> rm -rf $(SRC)/*.out
+> rm -rf build/*
+.PHONY: clean
