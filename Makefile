@@ -17,9 +17,11 @@ cur_dir = $(shell pwd)
 SRC = src
 TEX = Paper
 
+PNG_IMAGES := $(shell find $(SRC)/images -name "*.png")
+PDF_IMAGES := $(patsubst %.png, %.png.pdf, $(PNG_IMAGES))
+
 build: build/$(TEX).pdf
 .PHONY: build
-
 
 build/$(TEX).pdf: Makefile $(shell find $(SRC)/*)
 > rm -rf build
@@ -37,6 +39,12 @@ serve:
 .PHONY: serve
 
 #> inotifywait -qrm --event modify src/* | while read file; do make; done
+
+images: $(PDF_IMAGES)
+.PHONY: images
+
+%.png.pdf: %.png
+> convert -compress LZW $*.png pdf:$*.png.pdf
 
 
 clean:

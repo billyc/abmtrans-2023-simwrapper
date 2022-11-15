@@ -44,6 +44,9 @@
       urlcolor=blue}
 %\usepackage{amsmath}
 
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
 
 %% The ecrc package defines commands needed for running heads and logos.
 %% For running heads, you can set the journal name, the volume, the starting page and the authors
@@ -58,7 +61,7 @@
 \journalname{Procedia Computer Science}
 
 %% Give the author list to appear in the running head
-\runauth{William (Billy) Charlton}
+\runauth{William Charlton}
 
 %% The choice of journal logo is determined by the \jid and \jnltitlelogo commands.
 %% A user-supplied logo with the name <\jid>logo.pdf will be inserted if present.
@@ -164,13 +167,12 @@
 \address[b]{San Diego Association of Governments, 401 B Street, Unit 800, San Diego, CA 92101, United States}
 
 \begin{abstract}
-YY
-Data visualization has been an integral part of transportation planning and travel for decades. This effort describes the essential features and use cases of a general travel data visualization platform. A new web-based, open-source, configurable platform is then presented that can produce a wide array of interactive charts, maps, and dashboards that are generally useful in the transportation domain. The details of software design are provided along with several examples of implementation at a public agency. The platform is found to be very flexible and the straightforward configuration using text files enables efficient development and deployment of web-based interactive visualizations.
+A new open-source, web-based, configurable data visualization platform is presented that is specifically designed to support large-scale transportation simulations including MATSim and ActivitySim. It produces a wide array of interactive charts, maps, animations and analysis dashboards that are generally useful in the transportation domain. Interactive visualizations can be created and viewed locally on an analyst's laptop, or public web-based dashboards can be published for viewing on the open Internet. The details of software design are provided along with several examples of implementation at public agencies. User feedback shows the platform is found to be very flexible, while the straightforward configuration approach enables efficient development and deployment of web-based interactive visualizations. While it is not intended to replace geographic information systems or commercial software packages, the smaller curated set of capabilities is found by users to warrant its current adoption at several public agencies. Further work is needed to add more useful features, improve the platform's quality and user experience, and extend documentation.
 
 \end{abstract}
 
 \begin{keyword}
-Data visualization; Data dashboards; Transport microsimulation; Human-Computer Interaction; MATSim; ActivitySim; Deck.gl
+Data visualization; Data dashboards; Transport microsimulation; Human-Computer Interaction; MATSim; ActivitySim
 \end{keyword}
 \cortext[cor1]{Corresponding author. Tel.: +1-415-335-9282}
 \end{frontmatter}
@@ -184,126 +186,123 @@ Data visualization; Data dashboards; Transport microsimulation; Human-Computer I
 
 \section{Introduction}
 
-Data visualization has been an integral part of transportation planning and travel forecasting for decades. More recently, transportation data visualizations have become interactive and can also be shared over the web (1). This paper describes SimWrapper, an advanced data visualization platform that is unique because it is open source, web-based, specifically targets transportation simulation and activity-based model outputs, and is actively developed and used worldwide.
+Data visualization has been an integral part of transportation planning and travel forecasting for decades \cite{dueker1990geographic}. More recently, transportation data visualizations have become interactive and can also be shared over the web \cite{NAP24755}. This paper describes SimWrapper, an advanced data visualization platform that is unique because it is open source, web-based, specifically targets transportation simulation and activity-based model outputs, is actively developed, and is already in use in several locations worldwide.
 
-MATSim is an agent-based microsimulation framework for large-scale transportation simulations. YY The Transport Planning and Telematics department at Technische Universität Berlin (TU Berlin) has been researching open source, web-based visualization platforms for displaying MATSim results since 2017.  These tools have taken various names including MatHub YY and AfterSim YY, and SimWrapper is the latest iteration of this research with some interesting new capabilities.
+SimWrapper was originally developed by the Transport Planning and Telematics department at Technische Universität Berlin (TU Berlin) to support MATSim, an agent-based microsimulation framework for large-scale transportation simulations \cite{MATSimBook}. TU Berlin has been researching open source, web-based visualization platforms for displaying MATSim results since 2017.  These tools have taken various names including MatHub \cite{CharltonLaudan2020WebBasedVisualization} and AfterSim \cite{CHARLTON2021728}, and SimWrapper is the latest iteration of this research with some interesting and unique capabilities.
 
-Past studies present visualization tools and platforms that were developed to cater to the needs of a broad range of applications, ranging from visualizing traffic microsimulation (2, 3) and transportation accessibility (4) to highway performance measures (5–7) and safety (8). Previous literature reveals that the number of web-based interactive platforms specifically developed for visualizing travel demand model inputs and outputs is still limited. With microsimulation and activity-based models gaining popularity in recent years due to higher policy sensitivity and behavioral realism (9, 10), the input and output datasets are increasing in granularity and complexity. Consequently, there is a growing need for tools that can effectively visualize these datasets. The visualizations could potentially be used for a variety of purposes such as conducting quality checks on model inputs, summarizing simulation outputs, comparing outputs across different scenarios, etc. In addition, they may be needed to communicate the findings of travel modeling efforts and analyses to decision-makers and the public.
-
-A new web-based, open source, configurable platform is presented that can produce a wide array of interactive charts, maps, and dashboards that are generally useful in the transportation domain. The details of software design are provided along with some examples of implementation at public agencies. User feedback shows the platform is found to be flexible and the straightforward configuration using text files enables efficient development and deployment of repeatable and deployable web-based interactive visualizations.
+The platform produces a wide array of interactive charts, maps, and dashboards that are generally useful in the transportation domain. User feedback shows the platform is found to be flexible, and straightforward configuration using text files enables efficient development and deployment of repeatable and deployable web-based interactive visualizations. The details of software design are provided below along with some examples of implementation at public agencies.
 
 This new platform, SimWrapper, in a nutshell:
 
 \begin{itemize}[]
 \item
-    is a static website in the form of a ``single page application'', a common approach in current web development that is compatible with all modern web browsers;
+    is a static website in the form of a ``single page application'' that is compatible with all modern web browsers;
 \item
-    supports network-based file storage for public- and/or group-accessible shared data (such as model runs or simulation outputs), but has no other back-end server requirements and can run completely locally if no network file storage is available;
+    allows the user to navigate their local filesystem folders in-browser, rather than uploading files to a central server or database. This matches the design of MATSim and other simulation frameworks which all produce collections of output files by default;
 \item
-    allows the user to navigate their local filesystem or shared network storage of data to view results that are saved in a specific folder, rather than a database-centric approach. This matches the design of MATSim and other simulation models which produce collections of output files by default;
+    also supports network-based file storage for public- and/or group-accessible shared data (such as model runs or simulation outputs), for internal collaboration and for world-accessible project dashboards;
 \item
-    provides a collection of data visualization archetypes that are appropriate for displaying various types of data, e.g. statistical chart types (bars, lines, area, pie), geographic data viewers supporting road and transit network link data, area aggregation (``choropleth'' and ``spider'') maps, XY coordinate plots, and more;
+    provides a collection of data visualization archetypes, e.g. statistical charts, geographic data viewers supporting road and transit network link data, area aggregation maps, X/Y coordinate plots, agent animations, and more;
 \item
-    can combine all of these disparate components into cohesive dashboards that the user can lay out in a flexible manner, using small declarative configuration files. These configurations can be applied across multiple projects or simulation runs;
+    can combine all of these components into cohesive dashboards that the user can lay out in a flexible manner, using drag and drop or by editing small text files. These configurations can be applied project-wide;
 \item
     enables easy and cost-free online publishing of results.
 \end{itemize}
 
-SimWrapper can be deployed locally at an agency or the online version can be used directly. It is being used by several project teams at TU Berlin and by external researchers as well. It is generic enough to be broadly useful, but notably it is not intended to supercede or replace advanced GIS tools such as QGis nor commercial MATSim analysis packages.
+SimWrapper can be deployed on a local network or accessed directly from the main SimWrapper website linked at the end of this paper. It is used by several project teams at TU Berlin and by some public agencies. SimWrapper is generic enough to be broadly useful, but it is not intended to replace GIS tools nor commercial analysis packages.
 
 % ============================================================
 \section{State of research}
 
-hi
+Numerious past studies present visualization tools and platforms that were developed to cater to the needs of a broad range of applications, ranging from visualizing traffic microsimulation \cite{CHARLTON2021728,lu2015global}, and transportation accessibility \cite{yin2015understanding} to highway performance measures \cite{NAP26651}.
+
+Previous literature reveals that the number of web-based interactive platforms specifically developed for visualizing travel demand model inputs and outputs is still limited. Agent-based microsimulation and activity-based models are gaining popularity in recent years due to higher policy sensitivity and behavioral realism \cite{LempMcWethy2007}, and with them the input and output datasets are increasing in granularity and complexity.
+
+Consequently, there is a growing need for tools that can effectively visualize these datasets. The visualizations could potentially be used for a variety of purposes such as conducting quality checks on model inputs, summarizing simulation outputs, comparing outputs across different scenarios, etc. In addition, they may be needed to communicate the findings of travel modeling efforts and analyses to decision-makers and the public, who are less and less interested in reading PDF reports \cite{KAHILATANI201945}.
 
 % ============================================================
 \section{SimWrapper: design and implementation}
 
-SimWrapper is an open source and web-based data visualization platform intended for researchers who wish to build interactive dashboards that summarize the results of their simulations and model runs. Initial internal discussions identified necessary capabilities which were then augmented through iterative trial and error fashion. The current design and features are described here.
+SimWrapper is an open source and web-based data visualization platform intended for researchers who wish to build interactive dashboards that display the results of their simulations and model runs. The platform is designed as a standalone website which is configured to access files stored on the local machine, on network file servers, or using internet-based file storage.
 
-Like many other dashboard tools, SimWrapper provides functionality for displaying basic interactive charts such as bar, line, area, pie, and scatterplots. But SimWrapper is also able to create many advanced map-based visualizations of large disaggregate datasets derived from MATSim and ActivitySim, including: link-based plots for road volumes, transit ridership, emissions, etc.; time-based animations of simulated vehicle positions; point data such as activity locations; origin/destination summaries, mode shift diagrams, and more. Each of these can be viewed individually in a browser window or combined into cohesive dashboards.
+Initial internal discussions identified necessary capabilities which were then augmented through iterative trial and error fashion. Like many other dashboard tools, SimWrapper can display interactive charts such as bar, line, pie, and scatterplots. But SimWrapper can also create many advanced map-based visualizations of large disaggregate datasets derived from MATSim and ActivitySim \cite{ActivitySim}, described below. Each of these can be viewed individually or combined into cohesive dashboards.
 
-The platform is designed as a standalone website which is configured to access files stored on the local machine, on network file servers, or internet-based file storage. For example at TU Berlin, analysts often review run outputs on their local machines, and then publish “good” runs to a departmental file server. Details of configuring network file storage are at YY.
+The high-level workflow is as follows: after running a simulation, some outputs such as MATSim trips and events can be directly viewed in SimWrapper, while other outputs require some post-processing to produce summary datasets in comma-separated value (CSV) format. Along with the data, the user provides configuration details for each dashboard which define the layout and any additional parameters. Typical configuration details are the names and locations of input files, color and width symbology specifications, and so on. These parameters can be set on a project level or for individual runs, and are stored as specially-formatted text files using the common "YAML" text markup format. The website reads these files and generates the dashboards. Dashboards can be organized as separate pages, be full-screen, or use a special side-by-side mode for comparison tasks.
 
-The high-level workflow is as follows: after running a simulation, some outputs such a MATSim trips and events can be directly viewed in SimWrapper without any additional effort, while others require some post-processing scripts to produce summary datasets in comma-separated value (CSV) format. Along with the data, the user provides configuration details for each dashboard which define the layout, which visualizations to place where, and any additional parameters needed for that panel. Typical configuration details are the names and locations of input files, color and width symbology specifications, and so on. These parameters can be set on a project level or for individual runs, and are stored as specially-formatted text files using the popular "YAML" text markup format. The SimWrapper website reads these files and generates the dashboards. Dashboards can be organized as separate pages, be full-screen, or use a special side-by-side mode for comparison tasks.
-
-Notably, end users are not expected to know or use Javascript or any other programming language; SimWrapper is essentially just a website like any other. It reads the files in accessible model output folders directly and builds visualizations (or “dashboards” with multiple visualizations) according to the text configuration files in those same folders. Post-processing scripts, if needed, can use any language that the user prefers.
+End users are not expected to know or use JavaScript, Python or any other notebook programming language; SimWrapper is essentially just a website like any other. It reads the files directly and builds visualizations according to the text configuration files in those same folders.
 
 \subsection{User feedback on the design approach}
 
-Previous research showed that most regular users in the middle of their research workflow run simulations either on their personal laptop/desktop machines, or on shared compute cluster machines with large storage but no public-facing access via the web. These runs are usually not intended to be immediately published.
+Previous research showed that most regular users in the middle of their research workflow run simulations either on their personal laptop/desktop machines, or on shared compute cluster machines with large storage but no public-facing access to the web. These runs are usually not intended to be immediately published. Analysts often run and review scenarios on their local machines, and then publish “good” runs to a departmental file server.
 
-User feedback from early versions of the tool made two design goals clear: (1) analysts do not want to duplicate and upload their large output files to a new system such as a separate visualization server or database, and (2) building consistent visualizations across model runs required the configuration of colors, variables, breakpoints, and map traits to all be saved and copyable among runs.
+User feedback from early versions of the tool made two design goals clear: (1) analysts do not want to duplicate and upload their large output files to a new system, and (2) building consistent visualizations across model runs requires the configuration details to be copyable amongst runs.
 
-The first design goal requires finding a way to grant the user's web browser access to select folders on their filesystem. With Google Chrome and Microsoft Edge, this is as simple as clicking “yes” to a security popup when using the site. For other browsers, a small companion program is provided which runs in the user's top-level data folder. This tool runs a local web (HTTP) server that grants the needed access to files and folders in its startup folder.
+The first design goal requires finding a way to grant the user's web browser access to select folders on their local filesystem. With Google Chrome and Microsoft Edge, this is as simple as clicking “yes” to a security popup when using the site. For other browsers, a small companion program (link at the end) is provided which runs in the user's top-level data folder. This tool runs a local web (HTTP) server that grants the needed access to files and folders in its startup folder.
 
-The second goal, creating consistent visualizations, is accomplished by authoring configuration files which can be shared among runs or copied between folders as needed. Initially, the configurations can be created interactively using the website, choosing details such as dataset columns containing data, color ramps, widths, scales, etc. Then an export button writes the configuration to a text file which can be copied or modified as needed. This provides
-a \textit{``best of both worlds''} design where the user isn't expected to memorize the configuration file format and can produce valid configurations using the website itself; but they can also edit the exported text file to rapidly make small changes and share them across model runs.
+The second goal, creating consistent visualizations, is accomplished by authoring configuration files which can be shared among runs or copied between folders as needed. Initially, visualizations can can be created interactively using the website, choosing details such as datasets, colors, scales, etc. Then an export button writes the configuration to a text file which can be copied or modified as needed.
 
-Eventually, most users of SimWrapper wish to publish their dashboards (either internally or on the web), so a method for accessing network-based file resources is also provided.
+This provides a \textit{``best of both worlds''} design where the user isn't expected to memorize the configuration file format and can produce valid configurations using the website itself; but they can also edit the exported text file to rapidly make small changes and share them across model runs.
 
-\subsection{Managing and accessing files in SimWrapper}
+\subsection{Managing, accessing, and publishing files with SimWrapper}
 
-SimWrapper is designed to allow browsing of local files or files on network servers. Local files can be simply accessed on Chrome/Edge browsers or by using the companion HTTP server tool, including source and user documentation available at \url{https://pypi.org/project/simwrapper/}.
+Eventually, most users of SimWrapper wish to publish their dashboards (either internally or on the web), so a method for accessing network-based file resources is also provided. For this, the server needs to provide HTTP-based file and folder browsing via a defined URL. This is easily configured on any web server such as NGINX or Apache, and every cloud-based service also provides this option. The configuration details are provided on the SimWrapper website.
 
-The local HTTP server will only serve the files from inside the working directory in which it is started, including any subfolders. No other folders on the user's machine are exposed. The computer's operating machine has default firewall and router rules that will generally prohibit any outside access from other computers on the LAN or the Internet.
+The public TU Berlin file server is one such data source, but others can be added by end users. Each source must allow HTTP-based directory access to this storage: SimWrapper needs to be able to \emph{view directory listings} and \emph{retrieve file contents}. SimWrapper never writes any files anywhere itself; it is a read-only system.
 
-For network-based file storage, the server needs to provide HTTP-based file and folder browsing via a defined URL. This is easily configured on any web server such as NGINX or Apache, and every cloud-based service also provides this option. The configuration details are provided on the SimWrapper website, linked in the Online Resources section in Chapter YY.
+To actually publish a SimWrapper-based website online, one simply clones or copies the website code from the SimWrapper website, copies all data and configuration files to the \textit{data} subfolder, and pushes it to any static web host, such as GitHub Pages. More details are on the SimWrapper website.
 
-As an example, For example, the TU Berlin "PAVE" project datasets are all stored on the VSP public file server at the URL:
+% For more examples, reference the primary TU Berlin SimWrapper website which hosts a gallery of many example dashboards on its public file server.
 
-\url{https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/projects/pave/website/}
+% \subsubsection{Data security and privacy}
 
-That URL is the ``root'' of the project; all of the project dashboard configurations, model outputs, and processed data files exist in various subfolders below that location. The PAVE website at \url{https://vsp.berlin/pave} is configured to read files from that base URL.
-
-SimWrapper is centered around this idea of top-level "root" data sources, and can be configured to access multiple sources. The public TU Berlin file server is one such root, but others can easily be added by end users. Each root must provide HTTP-based directory access to this storage: SimWrapper needs to be able to \emph{view directory listings} and \emph{retrieve file contents}. SimWrapper never writes any files anywhere itself; it is a read-only system.
-
-For more examples, reference the primary TU Berlin SimWrapper site at \url{https://vsp.berlin} which hosts a gallery of many example dashboards on its public file server.
-
-\subsubsection{Data security and privacy}
-
-The SimWrapper site itself is loaded from the Internet, but once loaded, the user's data never leaves their computer. SimWrapper is an entirely client-based system with absolutely no upstream data server. The JavaScript code runs in the users' browser, accessing files available on localhost or on configured data sources. Data comes to the browser, but nothing leaves the browser. If there are privacy or confidentiality issues with model outputs, SimWrapper can still be used for analysis in this ``localhost'' mode. The SimWrapper website is fully open source, collects no user information, stores no cookies, never sees user data, and therefore has minimal privacy implications.
-
-
-YY \cite{CharltonLaudan2020WebBasedVisualization} did it first.
+% The SimWrapper site itself is loaded from the Internet, but once loaded, the user's data never leaves their computer. SimWrapper is an entirely client-side system with absolutely no upstream data server. Data is loaded into the browser from wherever, but nothing leaves the browser. The SimWrapper website is fully open source, collects no user information, stores no cookies, never sees user data, and therefore has minimal privacy implications.
 
 %% ======================================================================
 %% ======================================================================
 %% ======================================================================
-\section{Data visualizations implemented in SimWrapper}
+\section{Some key and noteworthy data visualizations implemented in SimWrapper}
 
-This section catalogues some of the key and noteworthy data visualizations currently implemented in SimWrapper.
+Figures 1 and 2 show example dashboards with sample data, to give the reader an idea of what is possible with SimWrapper. Unfortunately, the human-computer interface of an interactive plot is impossible to capture in a PDF.
 
-%-----------------------------------------------------
-\subsection{Network link viewer}
+The \textbf{link viewer} can display networks in MATSim or shapefile formats. Datasets can be joined by link ID, and then symbology and filtering is configured in the UI or via YAML configuration.
 
-The link viewer can display networks in MATSim or shapefile formats. Datasets can be joined by link ID, and then colors, line widths, and differences can be configured in the UI or via YAML configuration. Hover details can also be configured. User testing shows that much more work is still necessary to meet the full panoply of desired link data visualizations, such as better data filters and grouping.
+An \textbf{area map} visualization allows shapefiles and area-based maps to be created with line, color, fill, filter, and difference symbologies. Multiple datasets can be joined to the area boundaries and maps can be interactively developed and then exported to YAML.
 
-%-----------------------------------------------------
-\subsection{Area, choropleth, and shapefile maps}
+\textbf{X/Y points and X/Y hexagon} viewers handle point data, as not all transport data is link-based. Activity locations, home locations, pickups and dropoffs for transit and taxi modes, all have geographic coordinates associated with them. For this type of point data, two visualizations are provided: one which displays point data directly, possibly linked to time-of-day, and the other which aggregates point data into equal-size hexagons across the map. The default MATSim file \textit{output\_trips.csv} is automatically viewable using this visualization.
 
-A feature-rich shapefile visualization allows area-based maps to be created with line, color, fill, filter, and difference symbologies. Multiple datasets can be joined to the area boundaries and maps can be interactively developed and then exported to YAML.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth,height=2.8in]{images/fig-dashboard-1.png.pdf}
+  \caption{Example dashboard showing (a) vehicle animation and point data, (b) point data aggregated into areas; (c) some basic chart summaries}
+  \label{fig:chart1}
+\end{figure}
 
-Note that the SimWrapper research platform cannot possibly be as feature-rich as a purpose-built GIS system; a good set of defaults and capabilities has been chosen based on user needs and requests.
+A \textbf{vehicle animation} for MATSim event files allows interactive viewing of vehicle trajectories on a second-by-second basis. Postprocessing can enable the user to focus on specific markets or modes such as autonomous vehicle fleets.
 
-%-----------------------------------------------------
-\subsection{X/Y points and X/Y hexagon plots}
+Left out due to space considerations are the basic charts, Vega-Lite\cite{VegaLiteWebsite}  advanced charts; MATSim transit networks; MATSim freight/carriers; aggregate origin/destination plots; and a summary table / calculation generator.
 
-Not all transport simulations outputs are link-based. Activity locations, home locations, pickups and dropoffs for transit and taxi modes, all have geographic coordinates associated with them, but are not necessarily attached to specific links. For this type of point data, two visualizations are possible: one which displays point data directly, possibly linked to time-of-day, and the other aggregates point data into equal-size hexagons across the map. The default MATSim file \textit{output\_trips.csv} is automatically viewable using this visualization.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth,height=3in]{images/fig-dashboard-2.png.pdf}
+  \caption{Example dashboard depicting network links and mode shift diagrams}
+  \label{fig:chart2}
+\end{figure}
 
-\subsection{Summary calculations: providing top-line summary metrics}
 
-Top-level summaries provide the first indication of useful or erroneous results, such as overall mode share, average travel times, total emissions, and so forth. These measures are an excellent way to "sanity-check" a model run; in other words, to identify any suspect results or errors when compared to previously-established norms.
 
-The most robust way to generate and display a complex calculation is to create a custom post-processing script tailored to the job, which outputs a simple CSV with the needed values. Especially for more complex post-processing needs, using a high-quality platform such as Python or R is the recommended path.
+% --------------------------------------------------------------------
+% \subsection{Summary calculations: providing top-line summary metrics}
 
-For more simple summaries, we developed a way to extract and minimally process typical CSV and XML data file formats. This is based on experience with the hesitancy of some analysts in our department to write Python and R scripts. A special YAML configuration schema for calculations has four sections: \textbf{files}, the set of CSV or XML input files;  \textbf{interactive inputs}, entries in the UI where users can provide values directly (imagine fuel cost per liter, or number of vehicles in a taxi fleet); \textbf{calculations}, an ordered list of mathematical variables and equations, based on the data columns and inputs in the previous sections; finally, \textbf{outputs}, the entries to be displayed in the dashboard.
+% --------------------------------------------------------------------
+% \subsection{Summary calculations: providing top-line summary metrics}
 
-The details of the calculation engine domain-specific language (DSL) specification are available on the main SimWrapper documentation website.
+% Top-level summaries provide the first indication of useful or erroneous results, such as overall mode share, average travel times, total emissions, and so forth. These measures are an excellent way to "sanity-check" a model run; in other words, to identify any suspect results or errors when compared to previously-established norms.
 
-\subsection{Other visualizations}
+% The most robust way to generate and display a complex calculation is to create a custom post-processing script tailored to the job, which outputs a simple CSV with the needed values. Especially for more complex post-processing needs, using a high-quality platform such as Python or R is the recommended path.
 
-Left out due to space considerations are the basic area, line, bar, pie, and scatterplot implementations; Vega-Lite YY advanced charts for specialized statistics and plot types; the transit network and ridership viewer; MATSim freight and carrier visualizer; aggregate origin/destination summary plots; and the image thumbnail and video player.
+% For more simple summaries, we developed a way to extract and minimally process typical CSV and XML data file formats. This is based on experience with the hesitancy of some analysts in our department to write Python and R scripts. A special YAML configuration schema for calculations has four sections: \textbf{files}, the set of CSV or XML input files;  \textbf{interactive inputs}, entries in the UI where users can provide values directly (imagine fuel cost per liter, or number of vehicles in a taxi fleet); \textbf{calculations}, an ordered list of mathematical variables and equations, based on the data columns and inputs in the previous sections; finally, \textbf{outputs}, the entries to be displayed in the dashboard.
+
+% The details of the calculation engine domain-specific language (DSL) specification are available on the main SimWrapper documentation website.
 
 
 %% ======================================================================
@@ -311,54 +310,40 @@ Left out due to space considerations are the basic area, line, bar, pie, and sca
 %% ======================================================================
 \section{Example projects using SimWrapper}
 
-Here is a sample of projects currently using SimWrapper.
-
 %% ======================================================================
-\subsection{KoMoD:next (Düsseldorf, Germany)}
+\textbf{KoMo:Dnext (Düsseldorf, Germany)}: An extensive dashboard for the MATSim Düsseldorf transport scenarios, including link flow capacities and volumes, statistical charts, videos, and more. Figure 3 shows a small portion of the site. Viewable online at \textit{vsp.berlin/simwrapper/komodnext}
 
-An extensive dashboard for the MATSim Düsseldorf transport scenarios, including link flow capacities and volumes, statistical charts, sample videos, and more.
+\textbf{SF-CHAMP: San Francisco, California, USA}. SF-CHAMP is the activity-based model used by the San Francisco County Transportation Authority (SFCTA)\cite{outwater2006san}. SFCTA uses SimWrapper to perform quality control on model inputs and to review model outputs, using both the area map and the link viewer.
 
-YY IMAGE
+There is no room for screenshots of the SF-CHAMP project sites, nor is there room for showcasing other projects using SimWrapper, including the ActivitySim consortium of agencies using it in the United States, and the excellent dashboard for the RealLabHH project in Hamburg, Germany, available online for review at \textit{vsp.berlin/simwrapper}.
 
-\url{https://vsp.berlin/simwrapper/komodnext}
-
-
-%% ======================================================================
-\subsection{SF-CHAMP: San Francisco, California, USA}
-
-SF-CHAMP is the activity-based model used by the San Francisco County Transportation Authority (SFCTA). SFCTA uses SimWrapper to perform quality control on model inputs and to review model outputs, using both the area map and the link viewer.
-
-\url{https://www.sfcta.org/sf-champ-modeling}
-
-\subsection{RealLabHH (Hamburg, Germany)}
-
-Large MATSim scenarios for Hamburg, Germany are explored and compared in the SimWrapper-based website. Modal split, road volumes, accident costs, and emissions are all given their own pages with many link volume plots available.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth,height=3.2in]{images/fig-komod-next.png.pdf}
+  \caption{KoMo:Dnext project dashboard}
+  \label{fig:chart3}
+\end{figure}
 
 
 %% ======================================================================
 %% ======================================================================
 %% ======================================================================
-\section{Discussion and next steps}
+\section{Discussion and Conclusions}
 
-SimWrapper is under continuous development, and therefore its feature set is fluid. As of this writing, many of the basic needs of a transport planner are met: statistical summaries, area maps, network link displays, point data, and agent animations can all be displayed individually or merged into cohesive dashboards. These displays are repeatable for comparison across scenarios, and publishable online where non-analysts can explore them interactively. Thus, the technology has gone far beyond the old days of PDF reports.
+SimWrapper is under continuous development, and therefore its feature set is fluid. As of this writing, most of the basic needs of a transport planner are met: statistical summaries, area maps, network link displays, point data, and agent animations can all be displayed in cohesive dashboards. These are repeatable for comparison across scenarios, and publishable online. The technology has gone far beyond the old days of PDF reports.
 
-The combination of a user interface to generate transferable configuration files, simple file storage instead of a database, and generation of easily publishable websites enables analysts to rapidly prototype and then publicize their work, without requiring any programming.
+The unique combination of features enables analysts to rapidly prototype and then publish their work, without requiring any programming. Feedback from initial users identifies many specific "pain points" in the use of the system: (1) initial onboarding is too complex, and a basic off-the-shelf dashboard would help create a starting point for new users; (2) documentation is extensive but always lagging behind current features; (3) YAML configuration files are flexible but difficult to master; and (4) a more consistent way to handle scenario comparisons is needed. Despite these issues, current users convey a very optimistic outlook on their continued use of SimWrapper.
 
-Feedback from initial users identifies many specific "pain points" in the use of the system: (1) initial onboarding is too complex; a basic "point and go" dashboard without any modifications would help create a starting point for new users; (2) documentation is extensive YY but always lagging behind current features; (3) YAML configuration files are flexible but difficult to master, especially the complex array syntax; and (4) a more consistent way to handle scenario comparisons is needed.
+These issues and some new visualizations are currently being considered for the continued development of the platform. Beyond the featureset of SimWrapper itself, longer-term questions remain about the viability of a small open-source research project in the face of commercial tools specifically designed to work with MATSim outputs, as well as very well-established and feature-rich open source tools such as GIS systems. There does appear to be a niche for a completely open source web platform which is specifically designed for transport microsimulation visualization.
 
-These topics are currently being considered in the continued development of the platform.
+Having confirmed the utility and capabilities of a fully browser-based data visualization platform for several projects at multiple agencies, SimWrapper is a viable visualization framework for transport planners interested in an open source tool for analyzing and publishing their work.
 
-Beyond the featureset of SimWrapper itself, longer-term questions remain about the viability of a small open-source research project in the face of commercial tools specifically designed to work with MATSim outputs, as well as very well-established and feature-rich open source tools such as GIS systems. It is not the intention of the developers of SimWrapper to supercede or replace any existing tools, but there does appear to be a niche for a completely open source web platform which is specifically designed for transport planning and research.
+\section{Online resources}
 
+SimWrapper main website: \url{https://vsp.berlin/simwrapper}
 
-%% ======================================================================
-%% ======================================================================
-%% ======================================================================
-\section{Conclusion}
+Companion tool for browsing local files: \url{https://pypi.org/project/simwrapper}
 
-Having confirmed the utility and capabilities of a fully browser-based data visualization approach for three individual project portals, we then set out to generalize the method. An entirely generic data visualization platform is inherently more difficult than a project portal, as every researcher investigates widely disparate questions and will be focusing on completely different outputs. Where one researcher may be using MATSim to predict future dynamic-response shared taxi vehicle flows, another is doing emergency-response evacuation planning, or emissions reduction through increased transit ridership efforts. The tool needs to be extremely flexible.
-
-\subsection{Online resources}
 
 % \begin{figure}
 %   \centering
@@ -408,10 +393,11 @@ Having confirmed the utility and capabilities of a fully browser-based data visu
 
 This research was funded in part by the German Federal Ministry of Transport and Digital Infrastructure (funding number 16AVF2160). The author is thankful for the funding and support provided by the ActivitySim project. Some projects described in this paper use data provided by Senozon Deutschland GmbH.
 
-\bibliography{thesis}
+\bibliography{paper}
 \bibliographystyle{../src/elsarticle-harv}
 
 \end{document}
+
 
 %%
 %% End of file `procs-template.tex'.
