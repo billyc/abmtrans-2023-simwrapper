@@ -17,8 +17,8 @@ cur_dir = $(shell pwd)
 SRC = src
 TEX = Paper
 
-PNG_IMAGES := $(shell find $(SRC)/images -name "*.png")
-PDF_IMAGES := $(patsubst %.png, %.png.pdf, $(PNG_IMAGES))
+PNG_IMAGES := $(shell find $(SRC)/images -name "*.jpg")
+PDF_IMAGES := $(patsubst %.jpg, %.jpg.pdf, $(PNG_IMAGES))
 
 build: build/$(TEX).pdf
 .PHONY: build
@@ -43,8 +43,8 @@ serve:
 images: $(PDF_IMAGES)
 .PHONY: images
 
-%.png.pdf: %.png
-> convert -compress LZW $*.png pdf:$*.png.pdf
+%.jpg.pdf: %.jpg
+> convert -compress LZW $*.jpg pdf:$*.jpg.pdf
 
 
 clean:
